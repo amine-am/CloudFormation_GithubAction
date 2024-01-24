@@ -104,7 +104,7 @@ Resources:
         Type: 'AWS_PROXY'
         Uri: !Sub
           - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
-          - LambdaArn: !GetAtt [LambdaFunction, Arn]
+          - LambdaArn: !GetAtt [MyLambdaFunction, Arn]
       MethodResponses:
         - StatusCode: 200
       IntegrationResponses:
