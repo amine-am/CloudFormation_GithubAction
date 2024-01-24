@@ -1,79 +1,111 @@
-AWSTemplateFormatVersion: "2010-09-09"
-
-Parameters:
-  BucketName:
-    Type: String
-    Description: Name for the S3 bucket
-
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for Lambda functions and S3 bucket
 Resources:
-  S3Bucket:
+  MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref buck-amine
+      BucketName: buck-meta-am-2 #The name of the S3 Bucket
 
-  LambdaRole:
+  MyLambdaRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
-      Policies:
-        - PolicyName: LambdaS3Policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:GetObject
-                  - s3:PutObject
-                  - s3:ListBucket
-                Resource:
-                  - !Sub "arn:aws:s3:::${BucketName}"
-                  - !Sub "arn:aws:s3:::${BucketName}/*"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 
-  LambdaFunction:
+  MyLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Handler: index.lambda_handler
-      Role: !GetAtt LambdaRole.Arn
-      FunctionName: MyLambdaFunction
-      Runtime: python3.8
-      Timeout: 30
+      FunctionName: testfun00001 #The name of the Lambda function
       Code:
-        S3Bucket: !Ref S3Bucket
-        S3Key: lambda_function.zip
+        ZipFile: |
+          import json
+          import boto3
+
+          def lambda_handler(event, context):
+              s3_client = boto3.client('s3')
+              bucket_list = []
+
+              try:
+                  buckets = s3_client.list_buckets()["Buckets"]
+
+                  for bucket in buckets:
+                      bucket_name = bucket["Name"]
+                      all_objects = []
+                      
+                      try:
+                          objects = s3_client.list_objects_v2(Bucket=bucket_name)
+                          
+                          for obj in objects.get("Contents", []):
+                              response = s3_client.get_object(Bucket=bucket_name, Key=obj["Key"])["Body"].read().decode('utf-8')
+                              all_objects.append({'name': obj["Key"], 'content': response})
+                          
+                          bucket_list.append({'bucketName': bucket_name, 'objects': all_objects})
+                      
+                      except Exception as e:
+                          bucket_list.append({'bucketName': bucket_name, 'objects': []})
+                          continue
+
+                  response_data = {
+                      'statusCode': 200,
+                      'headers': {
+                          "Content-Type": "application/json",
+                          "Access-Control-Allow-Origin": "*",
+                          "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                          "Access-Control-Allow-Methods": "OPTIONS,GET"
+                      },
+                      'body': json.dumps(bucket_list)
+                  }
+
+              except Exception as e:
+                  response_data = {
+                      'statusCode': 500,
+                      'headers': {
+                          "Content-Type": "application/json",
+                          "Access-Control-Allow-Origin": "*"
+                      },
+                      'body': json.dumps({'error': f'Error: {str(e)}'})
+                  }
+
+              return response_data
+
+      Handler: index.lambda_handler
+      Role: !GetAtt MyLambdaRole.Arn
+      Runtime: python3.8
+
 
   ApiGateway:
-    Type: AWS::ApiGateway::RestApi
+    Type: 'AWS::ApiGateway::RestApi'
     Properties:
-      Name: MyApi
+      Name: RESTAPI
 
-  ApiResource:
-    Type: AWS::ApiGateway::Resource
+  ApiGatewayResource:
+    Type: 'AWS::ApiGateway::Resource'
     Properties:
-      ParentId: !GetAtt ApiGateway.RootResourceId
-      PathPart: "listObjects"
       RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt [ApiGateway, RootResourceId]
+      PathPart: 'Prod'
 
-  ApiMethod:
-    Type: AWS::ApiGateway::Method
+  ApiGatewayMethod:
+    Type: 'AWS::ApiGateway::Method'
     Properties:
-      AuthorizationType: NONE
-      HttpMethod: POST
-      ResourceId: !Ref ApiResource
+      AuthorizationType: 'NONE'
+      HttpMethod: 'GET'
+      ResourceId: !Ref ApiGatewayResource
       RestApiId: !Ref ApiGateway
       Integration:
-        IntegrationHttpMethod: POST
-        Type: AWS_PROXY
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
         Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
-          - LambdaArn: !GetAtt LambdaFunction.Arn
-
-Outputs:
-  ApiUrl:
-    Description: "URL of the API Gateway"
-    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/listObjects"
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+          - LambdaArn: !GetAtt [LambdaFunction, Arn]
+      MethodResponses:
+        - StatusCode: 200
+      IntegrationResponses:
+        - StatusCode: 200
