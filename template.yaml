@@ -22,7 +22,7 @@ Resources:
   MyLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: testfun00001 #The name of the Lambda function
+      FunctionName: lambda-am-function #The name of the Lambda function
       Code:
         ZipFile: |
           import json
