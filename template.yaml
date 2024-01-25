@@ -105,4 +105,4 @@ Resources:
       FunctionName: !GetAtt  lambdaFunction.Arn
       Action: lambda:InvokeFunction
       Principal: apigateway.amazonaws.com
-      SourceAccount: 014643402661
+      SourceAccount: '014643402661'
