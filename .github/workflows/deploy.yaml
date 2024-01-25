@@ -3,9 +3,6 @@ name: 'Deploy to AWS CloudFormation'
 on: 
   push:
     branches: [ main ]
-  
-
-
 
 jobs:
   deploy:
@@ -13,11 +10,6 @@ jobs:
     steps:
       - name: Checkout code from master branch
         uses: actions/checkout@v2
-
-      - name: Deploy CloudFormation stack
-        uses: aws-actions/aws-cloudformation-deploy@v1
-        with:
-          capabilities: CAPABILITY_NAMED_IAM
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -32,4 +24,4 @@ jobs:
           name: test-stack-am
           template: template.yaml
           no-fail-on-empty-changeset: "1"
-          capabilities: CAPABILITY_NAMED_IAM          
+          capabilities: CAPABILITY_NAMED_IAM
