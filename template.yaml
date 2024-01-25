@@ -4,7 +4,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: buck-meta-am-4 #The name of the S3 Bucket
+      BucketName: buck-meta-am-5 #The name of the S3 Bucket
 
   MyLambdaRole:
     Type: AWS::IAM::Role
@@ -22,7 +22,7 @@ Resources:
   MyLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: lambda-am-function-4 #The name of the Lambda function
+      FunctionName: lambda-am-function-5 #The name of the Lambda function
       Code:
         ZipFile: |
           import json
@@ -104,7 +104,7 @@ Resources:
         Type: 'AWS_PROXY'
         Uri: !Sub
           - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
-          - LambdaArn: !GetAtt [My  LambdaFunction, Arn]
+          - LambdaArn: !GetAtt [MyLambdaFunction, Arn]
       MethodResponses:
         - StatusCode: 200
       IntegrationResponses:
