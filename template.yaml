@@ -4,7 +4,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: buck-meta-am-11 #The name of the S3 Bucket
+      BucketName: buck-meta-am-111 #The name of the S3 Bucket
 
   MyLambdaRole:
     Type: AWS::IAM::Role
@@ -109,18 +109,18 @@ Resources:
       MethodResponses:
         - StatusCode: 200
 
-  MyDeployment:
-    Type: AWS::ApiGateway::Deployment
-    DependsOn: MyApiMethod
-    Properties:
-      RestApiId: !Ref ApiGateway
-      StageName: 'Prod'
+  # MyDeployment:
+  #   Type: AWS::ApiGateway::Deployment
+  #   DependsOn: MyApiMethod
+  #   Properties:
+  #     RestApiId: !Ref ApiGateway
+  #     StageName: 'Prod'
 
-  MyDeploymentStage:
-    Type: AWS::ApiGateway::Stage
-    Properties:
-      DeploymentId: !Ref MyDeployment
-      RestApiId: !Ref ApiGateway
-      StageName: 'Prod'
+  # MyDeploymentStage:
+  #   Type: AWS::ApiGateway::Stage
+  #   Properties:
+  #     DeploymentId: !Ref MyDeployment
+  #     RestApiId: !Ref ApiGateway
+  #     StageName: 'Prod'
 
 
