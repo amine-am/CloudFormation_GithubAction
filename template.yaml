@@ -4,7 +4,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: buck-meta-am-7 #The name of the S3 Bucket
+      BucketName: buck-meta-am-8 #The name of the S3 Bucket
 
   MyLambdaRole:
     Type: AWS::IAM::Role
@@ -22,7 +22,7 @@ Resources:
   MyLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: lambda-am-function-7 #The name of the Lambda function
+      FunctionName: lambda-am-function-8 #The name of the Lambda function
       Code:
         ZipFile: |
           import json
@@ -92,13 +92,13 @@ Resources:
       ParentId: !GetAtt [ApiGateway, RootResourceId]
       PathPart: 'Prod'
 
-  # ApiGatewayMethod:
-  #   Type: 'AWS::ApiGateway::Method'
-  #   Properties:
-  #     AuthorizationType: 'NONE'
-  #     HttpMethod: 'GET'
-  #     ResourceId: !Ref ApiGatewayResource
-  #     RestApiId: !Ref ApiGateway
+  ApiGatewayMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: 'NONE'
+      HttpMethod: 'GET'
+      ResourceId: !Ref ApiGatewayResource
+      RestApiId: !Ref ApiGateway
   #     Integration:
   #       IntegrationHttpMethod: 'POST'
   #       Type: 'AWS_PROXY'
