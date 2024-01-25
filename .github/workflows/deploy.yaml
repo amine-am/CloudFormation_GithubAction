@@ -22,6 +22,6 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: test-stack-am-10
+          name: test-stack-am
           template: template.yaml
           no-fail-on-empty-changeset: "1"
