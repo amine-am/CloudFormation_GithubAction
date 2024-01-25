@@ -104,11 +104,10 @@ Resources:
         IntegrationHttpMethod: 'POST'
         Type: 'AWS_PROXY'
         Uri: !Sub
-          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
           - LambdaArn: !GetAtt [MyLambdaFunction, Arn]
       MethodResponses:
         - StatusCode: 200
-      IntegrationResponses:
-        - StatusCode: 200
+
 
 
