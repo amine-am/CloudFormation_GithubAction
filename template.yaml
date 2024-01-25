@@ -4,7 +4,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: buck-meta-am-2 #The name of the S3 Bucket
+      BucketName: buck-meta-am-3 #The name of the S3 Bucket
 
   MyLambdaRole:
     Type: AWS::IAM::Role
@@ -22,7 +22,7 @@ Resources:
   MyLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: lambda-am-function #The name of the Lambda function
+      FunctionName: lambda-am-function-3 #The name of the Lambda function
       Code:
         ZipFile: |
           import json
@@ -80,32 +80,32 @@ Resources:
       Runtime: python3.8
 
 
-  ApiGateway:
-    Type: 'AWS::ApiGateway::RestApi'
-    Properties:
-      Name: RESTAPI
+  # ApiGateway:
+  #   Type: 'AWS::ApiGateway::RestApi'
+  #   Properties:
+  #     Name: RESTAPI
 
-  ApiGatewayResource:
-    Type: 'AWS::ApiGateway::Resource'
-    Properties:
-      RestApiId: !Ref ApiGateway
-      ParentId: !GetAtt [ApiGateway, RootResourceId]
-      PathPart: 'Prod'
+  # ApiGatewayResource:
+  #   Type: 'AWS::ApiGateway::Resource'
+  #   Properties:
+  #     RestApiId: !Ref ApiGateway
+  #     ParentId: !GetAtt [ApiGateway, RootResourceId]
+  #     PathPart: 'Prod'
 
-  ApiGatewayMethod:
-    Type: 'AWS::ApiGateway::Method'
-    Properties:
-      AuthorizationType: 'NONE'
-      HttpMethod: 'GET'
-      ResourceId: !Ref ApiGatewayResource
-      RestApiId: !Ref ApiGateway
-      Integration:
-        IntegrationHttpMethod: 'POST'
-        Type: 'AWS_PROXY'
-        Uri: !Sub
-          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
-          - LambdaArn: !GetAtt [MyLambdaFunction, Arn]
-      MethodResponses:
-        - StatusCode: 200
-      IntegrationResponses:
-        - StatusCode: 200
+  # ApiGatewayMethod:
+  #   Type: 'AWS::ApiGateway::Method'
+  #   Properties:
+  #     AuthorizationType: 'NONE'
+  #     HttpMethod: 'GET'
+  #     ResourceId: !Ref ApiGatewayResource
+  #     RestApiId: !Ref ApiGateway
+  #     Integration:
+  #       IntegrationHttpMethod: 'POST'
+  #       Type: 'AWS_PROXY'
+  #       Uri: !Sub
+  #         - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+  #         - LambdaArn: !GetAtt [My  LambdaFunction, Arn]
+  #     MethodResponses:
+  #       - StatusCode: 200
+  #     IntegrationResponses:
+  #       - StatusCode: 200
