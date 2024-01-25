@@ -4,7 +4,7 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: buck-meta-am-9 #The name of the S3 Bucket
+      BucketName: buck-meta-am-10 #The name of the S3 Bucket
 
   MyLambdaRole:
     Type: AWS::IAM::Role
@@ -22,7 +22,7 @@ Resources:
   MyLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: lambda-am-function-9 #The name of the Lambda function
+      FunctionName: lambda-am-function-10 #The name of the Lambda function
       Code:
         ZipFile: |
           import json
@@ -90,24 +90,25 @@ Resources:
     Properties:
       RestApiId: !Ref ApiGateway
       ParentId: !GetAtt [ApiGateway, RootResourceId]
-      PathPart: 'Prod'
+      PathPart: 'myresource'
 
-  ApiGatewayMethod:
-    Type: 'AWS::ApiGateway::Method'
+
+  MyApiMethod:
+    Type: AWS::ApiGateway::Method
     Properties:
       AuthorizationType: 'NONE'
       HttpMethod: 'GET'
       ResourceId: !Ref ApiGatewayResource
       RestApiId: !Ref ApiGateway
-  #     Integration:
-  #       IntegrationHttpMethod: 'POST'
-  #       Type: 'AWS_PROXY'
-  #       Uri: !Sub
-  #         - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
-  #         - LambdaArn: !GetAtt [MyLambdaFunction, Arn]
-  #     MethodResponses:
-  #       - StatusCode: 200
-  #     IntegrationResponses:
-  #       - StatusCode: 200
+      Integration:
+        IntegrationHttpMethod: 'POST'
+        Type: 'AWS_PROXY'
+        Uri: !Sub
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+          - LambdaArn: !GetAtt [MyLambdaFunction, Arn]
+      MethodResponses:
+        - StatusCode: 200
+      IntegrationResponses:
+        - StatusCode: 200
 
-  #       ###
+
