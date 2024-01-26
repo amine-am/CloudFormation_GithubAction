@@ -2,7 +2,7 @@ name: 'Deploy to AWS CloudFormation'
 
 on: 
   push:
-    branches: [ main ]
+    branches: [ main ] #branch used
 
 jobs:
   deploy:
@@ -21,7 +21,7 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: test-stack-am-1
-          template: template.yaml
+          name: test-stack-am-1 #name of the stack
+          template: template.yaml #name of the cloudformation template
           no-fail-on-empty-changeset: "1"
           capabilities: CAPABILITY_NAMED_IAM
